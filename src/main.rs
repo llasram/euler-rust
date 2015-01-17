@@ -1,5 +1,9 @@
-use std::iter::iterate;
-use std::num::Float;
+use std::iter::{iterate, repeat};
+use primes::primes;
+use std::num::Int;
+use std::cmp;
+
+mod primes;
 
 #[allow(dead_code)]
 #[allow(unstable)]
@@ -11,54 +15,9 @@ fn e2() -> usize {
         fold(0, |acc, a| acc + a)
 }
 
-pub struct Primes {
-    primes: Vec<usize>,
-}
-
-impl Primes {
-    fn new() -> Primes {
-        Primes { primes: vec![2, 3] }
-    }
-
-    fn next(&mut self) -> usize {
-        let mut i = self.primes[self.primes.len() - 1];
-        loop {
-            i += 2;
-            let max = (i as f64).sqrt().ceil() as usize;
-            if !self.primes.iter().take_while(|&&p| p <= max).any(|&p| i % p == 0) {
-                break;
-            }
-        }
-        self.primes.push(i);
-        return i;
-    }
-
-    fn iter(&mut self) -> PrimesIter {
-        PrimesIter { primes: self, index: 0 }
-    }
-}
-
-pub struct PrimesIter<'a> {
-    primes: &'a mut Primes,
-    index: usize,
-}
-
-impl<'a> Iterator for PrimesIter<'a> {
-    type Item = usize;
-
-    fn next(&mut self) -> Option<usize> {
-        let result = if self.primes.primes.len() <= self.index {
-            self.primes.next()
-        } else {
-            self.primes.primes[self.index]
-        };
-        self.index += 1;
-        return Some(result);
-    }
-}
-
+#[allow(dead_code)]
 fn e3(n: usize) -> usize {
-    let mut primes = Primes::new();
+    let mut primes = primes();
     let mut x = n;
     loop {
         let p = primes.iter().find(|&p| x % p == 0).unwrap();
@@ -68,6 +27,62 @@ fn e3(n: usize) -> usize {
     return x;
 }
 
+#[allow(unstable)]
+fn count_digits(n: usize) -> usize {
+    iterate(n, |n| n / 10).take_while(|&n| n > 0).count()
+}
+
+#[allow(unstable)]
+fn get_digit(n: usize, i: usize) -> usize {
+    (n / (10.pow(i))) % 10
+}
+
+#[allow(unstable)]
+fn is_palindrome(n: usize) -> bool {
+    let len = count_digits(n);
+    let i_max = len - 1;
+    let m = len / 2;
+    (0..m).all(|i| get_digit(n, i) == get_digit(n, i_max - i))
+}
+
+#[allow(dead_code)]
+#[allow(unstable)]
+fn e4(n: usize) -> usize {
+    let min = 10.pow(n - 1);
+    let max = 10.pow(n);
+    (min..max).
+        flat_map(|i: usize| (i..max).map(move |j| i * j)).
+        filter(|&x: &usize| is_palindrome(x)).
+        fold(0, |x, y| cmp::max(x, y))
+}
+
+#[allow(dead_code)]
+#[allow(unstable)]
+fn e5(n: usize) -> usize {
+    let max = n + 1;
+    let mut primes = primes();
+    let hist0: Vec<usize> = repeat(0).take(max).collect();
+    let mut hist = hist0.clone();
+    for i in (2..max) {
+        let mut hist1 = hist0.clone();
+        let mut x = i;
+        while x > 1 {
+            let p = primes.iter().find(|&p| x % p == 0).unwrap();
+            hist1[p] += 1;
+            x /= p;
+        }
+        for (f, &n) in hist1.iter().enumerate() {
+            if n > 0 && n > hist[f] { hist[f] = n }
+        }
+    }
+    hist.iter().
+        enumerate().
+        filter(|&(_, &n)| n > 0).
+        fold(1, |a, (f, &n)| {
+            a * f.pow(n)
+        })
+}
+
 fn main() {
-    println!("{}", e3(600851475143));
+    println!("{}", e5(20));
 }
