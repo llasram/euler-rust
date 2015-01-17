@@ -72,6 +72,19 @@ fn e5(n: usize) -> usize {
         })
 }
 
+#[allow(dead_code)]
+#[allow(unstable)]
+fn e6(n: usize) -> usize {
+    let max = n + 1;
+    ((1..max).fold(0, |a, x| a + x).pow(2)
+     - (1..max).fold(0, |a, x| a + x.pow(2)))
+}
+
+#[allow(dead_code)]
+fn e7(n: usize) -> usize {
+    Primes::new().get(n - 1)
+}
+
 fn main() {
-    println!("{}", e5(20));
+    println!("{}", e7(10001));
 }

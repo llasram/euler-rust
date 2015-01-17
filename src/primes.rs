@@ -20,7 +20,7 @@ impl Primes {
     }
 
     #[allow(unstable)]
-    fn get(&mut self, i: usize) -> usize {
+    pub fn get(&mut self, i: usize) -> usize {
         let cache = &mut self.cache;
         let i_max = cache.len() - 1;
         if i_max >= i {
