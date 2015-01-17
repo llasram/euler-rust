@@ -1,7 +1,8 @@
 use std::iter::{iterate, repeat};
-use primes::primes;
 use std::num::Int;
 use std::cmp;
+
+use primes::Primes;
 
 mod primes;
 
@@ -17,14 +18,7 @@ fn e2() -> usize {
 
 #[allow(dead_code)]
 fn e3(n: usize) -> usize {
-    let mut primes = primes();
-    let mut x = n;
-    loop {
-        let p = primes.iter().find(|&p| x % p == 0).unwrap();
-        if p == x { break; }
-        x = x / p;
-    }
-    return x;
+    *Primes::new().factors(n).last().unwrap()
 }
 
 #[allow(unstable)]
@@ -60,17 +54,12 @@ fn e4(n: usize) -> usize {
 #[allow(unstable)]
 fn e5(n: usize) -> usize {
     let max = n + 1;
-    let mut primes = primes();
+    let mut primes = Primes::new();
     let hist0: Vec<usize> = repeat(0).take(max).collect();
     let mut hist = hist0.clone();
     for i in (2..max) {
         let mut hist1 = hist0.clone();
-        let mut x = i;
-        while x > 1 {
-            let p = primes.iter().find(|&p| x % p == 0).unwrap();
-            hist1[p] += 1;
-            x /= p;
-        }
+        for &p in primes.factors(i).iter() { hist1[p] += 1 }
         for (f, &n) in hist1.iter().enumerate() {
             if n > 0 && n > hist[f] { hist[f] = n }
         }

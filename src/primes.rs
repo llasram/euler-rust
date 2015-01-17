@@ -1,17 +1,30 @@
 use std::num::Float;
 use std::ops::Index;
+use std::iter::Unfold;
 use std::iter;
 
 pub struct Primes {
     cache: Vec<usize>,
 }
 
-pub fn primes() -> Primes {
-    Primes { cache: vec![2, 3] }
-}
-
 #[allow(unstable)]
 impl Primes {
+    pub fn new() -> Primes {
+        Primes{cache: vec![2, 3]}
+    }
+
+    pub fn factors(&mut self, n: usize) -> Vec<usize> {
+        Unfold::new(n, |&mut ref mut n| {
+            if *n == 1 {
+                None
+            } else {
+                let p = self.iter().find(|&p| *n % p == 0).unwrap();
+                *n /= p;
+                Some(p)
+            }
+        }).collect()
+    }
+
     fn get(&mut self, i: usize) -> usize {
         let cache = &mut self.cache;
         let i_max = cache.len() - 1;
