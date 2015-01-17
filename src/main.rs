@@ -18,7 +18,7 @@ fn e2() -> usize {
 
 #[allow(dead_code)]
 fn e3(n: usize) -> usize {
-    *Primes::new().factors(n).last().unwrap()
+    Primes::new().factors(n).last().unwrap()
 }
 
 #[allow(unstable)]
@@ -59,7 +59,7 @@ fn e5(n: usize) -> usize {
     let mut hist = hist0.clone();
     for i in (2..max) {
         let mut hist1 = hist0.clone();
-        for &p in primes.factors(i).iter() { hist1[p] += 1 }
+        for p in primes.factors(i) { hist1[p] += 1 }
         for (f, &n) in hist1.iter().enumerate() {
             if n > 0 && n > hist[f] { hist[f] = n }
         }

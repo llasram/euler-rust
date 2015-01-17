@@ -15,15 +15,8 @@ impl Primes {
         self.iter().find(|&p| n % p == 0).unwrap()
     }
 
-    pub fn factors(&mut self, n: usize) -> Vec<usize> {
-        let mut ret = Vec::new();
-        let mut n = n;
-        while n > 1 {
-            let p = self.factor(n);
-            ret.push(p);
-            n /= p;
-        }
-        ret
+    pub fn factors(&mut self, n: usize) -> Factors {
+        Factors { primes: self, value: n }
     }
 
     #[allow(unstable)]
@@ -63,5 +56,24 @@ impl<'a> Iterator for Iter<'a> {
         let result = self.primes.get(self.index);
         self.index += 1;
         Some(result)
+    }
+}
+
+pub struct Factors<'a> {
+    primes: &'a mut Primes,
+    value: usize,
+}
+
+impl<'a> Iterator for Factors<'a> {
+    type Item = usize;
+
+    fn next(&mut self) -> Option<usize> {
+        if self.value == 1 {
+            None
+        } else {
+            let p = self.primes.factor(self.value);
+            self.value /= p;
+            Some(p)
+        }
     }
 }
