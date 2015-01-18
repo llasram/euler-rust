@@ -1,4 +1,6 @@
+use std::io::{File, BufferedReader};
 use std::iter::{iterate, repeat};
+use std::collections::RingBuf;
 use std::num::Int;
 use std::cmp;
 
@@ -85,6 +87,26 @@ fn e7(n: usize) -> usize {
     Primes::new().get(n - 1)
 }
 
+#[allow(dead_code)]
+#[allow(unstable)]
+fn e8(n: usize) -> usize {
+    let path = Path::new("data/e8.txt");
+    let mut file = BufferedReader::new(File::open(&path));
+    let mut digits = file.chars().
+        map(|r| r.unwrap()).
+        filter(|c| c.is_digit(10)).
+        map(|c| c.to_digit(10).unwrap());
+    let mut factors: RingBuf<usize> = repeat(1).take(n).collect();
+    let mut result: usize = 1;
+    for nd in digits {
+        factors.pop_front();
+        factors.push_back(nd);
+        let product = factors.iter().fold(1, |a, &x| a * x);
+        result = cmp::max(result, product);
+    }
+    result
+}
+
 fn main() {
-    println!("{}", e7(10001));
+    println!("{}", e8(13));
 }
