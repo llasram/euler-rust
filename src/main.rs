@@ -1,12 +1,16 @@
+use std::cmp;
+use std::collections::RingBuf;
 use std::io::{File, BufferedReader};
 use std::iter::{iterate, repeat};
-use std::collections::RingBuf;
 use std::num::Int;
-use std::cmp;
 
 use primes::Primes;
 
+#[allow(unused_imports)]
+use e11::e11;
+
 mod primes;
+mod e11;
 
 #[allow(dead_code)]
 #[allow(unstable)]
@@ -107,6 +111,40 @@ fn e8(n: usize) -> usize {
     result
 }
 
+#[allow(dead_code)]
+#[allow(unstable)]
+fn e9(sum: usize) -> usize {
+    let (a, b, c) = (1..((sum + 2) / 3)).flat_map(|a| {
+        ((a + 1)..(((sum - a) + 1) / 2)).map(move |b| {
+            let c = sum - a - b;
+            (a, b, c)
+        })
+    }).find(|&(a, b, c)| {
+        (a * a) + (b * b) == (c * c)
+    }).unwrap();
+    a * b * c
+}
+
+#[allow(dead_code)]
+#[allow(unstable)]
+fn e10(max: usize) -> usize {
+    Primes::new().iter().take_while(|&p| p < max).fold(0, |a, p| a + p)
+}
+
+fn ndivisors(primes: &mut Primes, n: usize) -> usize {
+    primes.factors(n).hist().fold(1, |acc, (_, a)| acc * (a + 1))
+}
+
+fn e12(d: usize) -> usize {
+    let mut primes = Primes::new();
+    (1..).scan(0, |prev, i| {
+        *prev += i;
+        Some(*prev)
+    }).find(|&n| {
+        ndivisors(&mut primes, n) > d
+    }).unwrap()
+}
+
 fn main() {
-    println!("{}", e8(13));
+    println!("{}", e12(500));
 }
