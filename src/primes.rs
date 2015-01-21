@@ -57,6 +57,7 @@ pub struct Iter<'a> {
 impl<'a> Iterator for Iter<'a> {
     type Item = usize;
 
+    #[inline]
     fn next(&mut self) -> Option<usize> {
         let result = self.primes.get(self.index);
         self.index += 1;
@@ -72,6 +73,7 @@ pub struct Factors<'a> {
 impl<'a> Iterator for Factors<'a> {
     type Item = usize;
 
+    #[inline]
     fn next(&mut self) -> Option<usize> {
         if self.value == 1 {
             None

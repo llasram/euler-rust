@@ -5,6 +5,7 @@ use std::iter::{iterate, repeat};
 use std::num::Int;
 
 use primes::Primes;
+use stutter::IteratorStutter;
 
 #[allow(unused_imports)]
 use e11::e11;
@@ -62,13 +63,10 @@ fn e4(n: usize) -> usize {
 fn e5(n: usize) -> usize {
     let max = n + 1;
     let mut primes = Primes::new();
-    let hist0: Vec<usize> = repeat(0).take(max).collect();
-    let mut hist = hist0.clone();
+    let mut hist: Vec<usize> = repeat(0).take(max).collect();
     for i in (2..max) {
-        let mut hist1 = hist0.clone();
-        for p in primes.factors(i) { hist1[p] += 1 }
-        for (f, &n) in hist1.iter().enumerate() {
-            if n > 0 && n > hist[f] { hist[f] = n }
+        for (p, n) in primes.factors(i).unstutter_count() {
+            if n > hist[p] { hist[p] = n }
         }
     }
     hist.iter().
@@ -132,6 +130,7 @@ fn e10(max: usize) -> usize {
     Primes::new().iter().take_while(|&p| p < max).fold(0, |a, p| a + p)
 }
 
+#[allow(dead_code)]
 fn e12(d: usize) -> usize {
     let mut primes = Primes::new();
     (1..).scan(0, |prev, i| {
@@ -143,5 +142,5 @@ fn e12(d: usize) -> usize {
 }
 
 fn main() {
-    println!("{}", e12(500));
+    println!("{}", e5(20));
 }
