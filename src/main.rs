@@ -11,6 +11,7 @@ use e11::e11;
 
 mod primes;
 mod e11;
+mod stutter;
 
 #[allow(dead_code)]
 #[allow(unstable)]
@@ -131,17 +132,13 @@ fn e10(max: usize) -> usize {
     Primes::new().iter().take_while(|&p| p < max).fold(0, |a, p| a + p)
 }
 
-fn ndivisors(primes: &mut Primes, n: usize) -> usize {
-    primes.factors(n).hist().fold(1, |acc, (_, a)| acc * (a + 1))
-}
-
 fn e12(d: usize) -> usize {
     let mut primes = Primes::new();
     (1..).scan(0, |prev, i| {
         *prev += i;
         Some(*prev)
     }).find(|&n| {
-        ndivisors(&mut primes, n) > d
+        primes.ndivisors(n) > d
     }).unwrap()
 }
 

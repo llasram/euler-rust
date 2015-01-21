@@ -1,6 +1,7 @@
 use std::num::Float;
 use std::ops::Index;
 use std::iter;
+use stutter::IteratorStutter;
 
 pub struct Primes {
     cache: Vec<usize>,
@@ -17,6 +18,10 @@ impl Primes {
 
     pub fn factors(&mut self, n: usize) -> Factors {
         Factors { primes: self, value: n }
+    }
+
+    pub fn ndivisors(&mut self, n: usize) -> usize {
+        self.factors(n).unstutter_count().fold(1, |acc, (_, a)| acc * (a + 1))
     }
 
     #[allow(unstable)]
@@ -64,12 +69,6 @@ pub struct Factors<'a> {
     value: usize,
 }
 
-impl<'a> Factors<'a> {
-    pub fn hist(&'a mut self) -> FactorsHist<'a> {
-        FactorsHist { factors: self, prev: 1, count: 0 }
-    }
-}
-
 impl<'a> Iterator for Factors<'a> {
     type Item = usize;
 
@@ -80,48 +79,6 @@ impl<'a> Iterator for Factors<'a> {
             let p = self.primes.factor(self.value);
             self.value /= p;
             Some(p)
-        }
-    }
-}
-
-pub struct FactorsHist<'a> {
-    factors: &'a mut Factors<'a>,
-    prev: usize,
-    count: usize,
-}
-
-impl<'a> Iterator for FactorsHist<'a> {
-    type Item = (usize, usize);
-
-    fn next(&mut self) -> Option<(usize, usize)> {
-        loop {
-            if self.prev == 0 {
-                return None
-            } else {
-                match self.factors.next() {
-                    None => {
-                        let prev = self.prev;
-                        let count = self.count;
-                        self.prev = 0;
-                        self.count = 0;
-                        return Some((prev, count));
-                    },
-                    Some(p) => {
-                        if self.prev == 1 {
-                            self.prev = p;
-                            self.count = 1;
-                        } else if self.prev == p {
-                            self.count += 1;
-                        } else {
-                            let prev = self.prev;
-                            let count = self.count;
-                            self.prev = p;
-                            self.count = 1;
-                            return Some((prev, count))
-                        }
-                    }
-                }
-            }
         }
     }
 }
