@@ -1,3 +1,5 @@
+extern crate num;
+
 mod primes;
 mod stutter;
 mod early;

@@ -1,5 +1,7 @@
 [package]
-
 name = "euler-rust"
 version = "0.0.1"
 authors = ["Marshall Bockrath-Vandegrift <llasram@gmail.com>"]
+
+[dependencies]
+num = "*"
