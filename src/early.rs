@@ -126,7 +126,7 @@ pub fn e10(max: usize) -> usize {
 #[allow(dead_code)]
 pub fn e12(d: usize) -> usize {
     let mut primes = Primes::new();
-    (1..).scan(0, |prev, i| {
+    (1us..).scan(0us, |prev, i| {
         *prev += i;
         Some(*prev)
     }).find(|&n| {
