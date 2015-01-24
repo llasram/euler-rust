@@ -8,5 +8,5 @@ mod e13;
 mod e14;
 
 fn main() {
-    println!("{}", e14::e14_brute(1_000_000));
+    println!("{}", e14::e14(1_000_000));
 }
