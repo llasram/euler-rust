@@ -4,7 +4,9 @@ mod primes;
 mod stutter;
 mod early;
 mod e11;
+mod e13;
+mod e14;
 
 fn main() {
-    println!("{}", early::e5(20));
+    println!("{}", e14::e14_brute(1_000_000));
 }
